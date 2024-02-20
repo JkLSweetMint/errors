@@ -2,7 +2,7 @@ package sm_errors
 
 import (
 	"errors"
-	"errors/entities"
+	"sm_errors/entities"
 	"testing"
 )
 

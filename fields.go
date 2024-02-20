@@ -1,29 +1,25 @@
 package sm_errors
 
-import "errors/entities"
+import (
+	"errors"
+	"sm_errors/entities"
+)
 
-const FieldsErrorType entities.Type = "fields"
+const FieldsType entities.Type = "fields"
 
-// FieldsError - реализация ошибки с полями.
-type FieldsError interface {
+// Fields - реализация ошибки с полями.
+type Fields interface {
 	ID() (id entities.ID)
 	Type() (t entities.Type)
 	Status() (status entities.Status)
 	Fields() (fields entities.Fields)
 
 	Message(options ...entities.MessageOption) (message string)
-	Error() (err error)
+	Error() (err Error)
+	Is(err error) bool
 
-	SetError(err error) FieldsError
-	SetFields(fields ...entities.Field) FieldsError
-}
-
-// FieldsErrorConstructor - конструктор FieldsError ошибки.
-type FieldsErrorConstructor struct {
-	ID      entities.ID
-	Status  entities.Status
-	Message *entities.Message
-	Fields  entities.Fields
+	SetError(err error) Fields
+	SetFields(fields ...entities.Field) Fields
 }
 
 // fields - реализация ошибки с полями.
@@ -33,20 +29,14 @@ type fields struct {
 	fields entities.Fields
 }
 
-// Build - сбор конструктора FieldsError ошибки.
-func (constructor FieldsErrorConstructor) Build() FieldsError {
-	return &fields{
-		basic: &basic{
-			id:     constructor.ID,
-			t:      FieldsErrorType,
-			status: constructor.Status,
+// Error - получение единой абстракции ошибок.
+func (instance *fields) Error() (err Error) {
+	return Error(instance)
+}
 
-			message: constructor.Message,
-			err:     nil,
-		},
-
-		fields: constructor.Fields,
-	}
+// Is - проверка соответствия исходной ошибки.
+func (instance *fields) Is(err error) bool {
+	return errors.Is(instance.err, err)
 }
 
 // Fields - получение полей.
@@ -55,13 +45,13 @@ func (instance *fields) Fields() (fields entities.Fields) {
 }
 
 // SetError - установка изначальной ошибки.
-func (instance *fields) SetError(err error) FieldsError {
+func (instance *fields) SetError(err error) Fields {
 	instance.err = err
 	return instance
 }
 
 // SetFields - установка значение полей.
-func (instance *fields) SetFields(fields ...entities.Field) FieldsError {
+func (instance *fields) SetFields(fields ...entities.Field) Fields {
 	instance.fields = fields
 	return instance
 }

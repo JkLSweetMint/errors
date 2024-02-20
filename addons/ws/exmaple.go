@@ -1,13 +1,13 @@
 package sm_errors_ws
 
 import (
-	errors "errors"
-	"errors/entities"
+	errors "sm_errors"
+	"sm_errors/entities"
 )
 
 var (
-	ExampleBasicWsError Error = ErrorConstructor{
-		ErrorConstructor: errors.ErrorConstructor{
+	ExampleBasicWsError Basic = BasicConstructor{
+		BasicConstructor: errors.BasicConstructor{
 			ID:      0000000000000001,
 			Status:  entities.StatusFailed,
 			Message: new(entities.Message).Set("Example basic-ws message. "),
@@ -15,8 +15,8 @@ var (
 		StatusCode: StatusInternalServerError,
 	}.Build()
 
-	ExampleFieldsWsError FieldsError = FieldsErrorConstructor{
-		FieldsErrorConstructor: errors.FieldsErrorConstructor{
+	ExampleFieldsWsError Fields = FieldsConstructor{
+		FieldsConstructor: errors.FieldsConstructor{
 			ID:      0000000000000001,
 			Status:  entities.StatusFailed,
 			Message: new(entities.Message).Set("Example fields-ws message. "),

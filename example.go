@@ -1,15 +1,15 @@
 package sm_errors
 
-import "errors/entities"
+import "sm_errors/entities"
 
 var (
-	ExampleBasicError Basic = ErrorConstructor{
+	ExampleBasicError Basic = BasicConstructor{
 		ID:      0000000000000001,
 		Status:  entities.StatusFailed,
 		Message: new(entities.Message).Set("Example basic message. "),
 	}.Build()
 
-	ExampleFieldsError FieldsError = FieldsErrorConstructor{
+	ExampleFieldsError Fields = FieldsConstructor{
 		ID:      0000000000000001,
 		Status:  entities.StatusFailed,
 		Message: new(entities.Message).Set("Example fields message. "),
@@ -21,13 +21,13 @@ var (
 		},
 	}.Build()
 
-	ExampleBasicErrorWithMessageFormat Basic = ErrorConstructor{
+	ExampleBasicErrorWithMessageFormat Basic = BasicConstructor{
 		ID:      0000000000000001,
 		Status:  entities.StatusFailed,
 		Message: new(entities.Message).Set("Example basic message with message formatting text={{text}}. "),
 	}.Build()
 
-	ExampleFieldsErrorWithMessageFormat FieldsError = FieldsErrorConstructor{
+	ExampleFieldsErrorWithMessageFormat Fields = FieldsConstructor{
 		ID:      0000000000000001,
 		Status:  entities.StatusFailed,
 		Message: new(entities.Message).Set("Example fields message with message formatting text={{text}}. "),

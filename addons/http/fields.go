@@ -1,14 +1,14 @@
 package sm_errors_http
 
 import (
-	errors "errors"
-	"errors/entities"
+	errors "sm_errors"
+	"sm_errors/entities"
 )
 
-const FieldsErrorType entities.Type = "fields-http"
+const FieldsType entities.Type = "fields-http"
 
-// FieldsError - базовая реализация http ошибки с полями.
-type FieldsError interface {
+// Fields - базовая реализация http ошибки с полями.
+type Fields interface {
 	ID() (id entities.ID)
 	Type() (t entities.Type)
 	Status() (status entities.Status)
@@ -16,40 +16,21 @@ type FieldsError interface {
 	Fields() (fields entities.Fields)
 
 	Message(options ...entities.MessageOption) (message string)
-	Error() (err error)
+	Error() (err Error)
+	Is(err error) bool
 
-	SetError(err error) FieldsError
-	SetFields(fields ...entities.Field) FieldsError
-}
-
-// FieldsErrorConstructor - конструктор FieldsError ошибки.
-type FieldsErrorConstructor struct {
-	errors.FieldsErrorConstructor
-	StatusCode StatusCode
+	SetError(err error) Fields
+	SetFields(fields ...entities.Field) Fields
 }
 
 // fields - стандартная реализация http ошибки с полями.
 type fields struct {
-	errors.FieldsError
+	errors.Fields
 	t          entities.Type
 	statusCode StatusCode
 }
 
-// Build - сбор конструктора Error ошибки.
-func (constructor FieldsErrorConstructor) Build() FieldsError {
-	return &fields{
-		FieldsError: errors.FieldsErrorConstructor{
-			ID:      constructor.ID,
-			Status:  constructor.Status,
-			Message: constructor.Message,
-			Fields:  constructor.Fields,
-		}.Build(),
-		t:          FieldsErrorType,
-		statusCode: constructor.StatusCode,
-	}
-}
-
-// StatusCode - получение http статус кода ошибки.
+// StatusCode - получение статус кода http ошибки.
 func (instance *fields) StatusCode() (status StatusCode) {
 	return instance.statusCode
 }
@@ -59,14 +40,24 @@ func (instance *fields) Type() (t entities.Type) {
 	return instance.t
 }
 
+// Error - получение единой абстракции ошибок.
+func (instance *fields) Error() (err Error) {
+	return Error(instance)
+}
+
+// Is - проверка соответствия исходной ошибки.
+func (instance *fields) Is(err error) bool {
+	return instance.Fields.Is(err)
+}
+
 // SetError - установка изначальной ошибки.
-func (instance *fields) SetError(err error) FieldsError {
-	instance.FieldsError = instance.FieldsError.SetError(err)
+func (instance *fields) SetError(err error) Fields {
+	instance.Fields = instance.Fields.SetError(err)
 	return instance
 }
 
 // SetFields - установка значение полей.
-func (instance *fields) SetFields(fields ...entities.Field) FieldsError {
-	instance.FieldsError = instance.FieldsError.SetFields(fields...)
+func (instance *fields) SetFields(fields ...entities.Field) Fields {
+	instance.Fields = instance.Fields.SetFields(fields...)
 	return instance
 }

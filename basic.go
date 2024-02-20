@@ -1,8 +1,11 @@
 package sm_errors
 
-import "errors/entities"
+import (
+	"errors"
+	"sm_errors/entities"
+)
 
-const ErrorType entities.Type = "basic"
+const BasicType entities.Type = "basic"
 
 // Basic - базовая реализация ошибки.
 type Basic interface {
@@ -11,16 +14,10 @@ type Basic interface {
 	Status() (status entities.Status)
 
 	Message(options ...entities.MessageOption) (message string)
-	Error() (err error)
+	Error() (err Error)
+	Is(err error) bool
 
 	SetError(err error) Basic
-}
-
-// ErrorConstructor - конструктор Error ошибки.
-type ErrorConstructor struct {
-	ID      entities.ID
-	Status  entities.Status
-	Message *entities.Message
 }
 
 // basic - стандартная реализация ошибки.
@@ -31,17 +28,6 @@ type basic struct {
 
 	message *entities.Message
 	err     error
-}
-
-// Build - сбор конструктора Error ошибки.
-func (constructor ErrorConstructor) Build() Basic {
-	return &basic{
-		id:      constructor.ID,
-		t:       ErrorType,
-		status:  constructor.Status,
-		message: constructor.Message,
-		err:     nil,
-	}
 }
 
 // ID - получение идентификатора ошибки.
@@ -70,9 +56,14 @@ func (instance *basic) Message(options ...entities.MessageOption) (message strin
 	return
 }
 
-// Error - получение изначальной ошибки.
-func (instance *basic) Error() (err error) {
-	return instance.err
+// Error - получение единой абстракции ошибок.
+func (instance *basic) Error() (err Error) {
+	return Error(instance)
+}
+
+// Is - проверка соответствия исходной ошибки.
+func (instance *basic) Is(err error) bool {
+	return errors.Is(instance.err, err)
 }
 
 // SetError - установка изначальной ошибки.

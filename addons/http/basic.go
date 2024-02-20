@@ -1,29 +1,24 @@
 package sm_errors_http
 
 import (
-	errors "errors"
-	"errors/entities"
+	errors "sm_errors"
+	"sm_errors/entities"
 )
 
-const ErrorType entities.Type = "basic-http"
+const BasicType entities.Type = "basic-http"
 
-// Error - базовая реализация http ошибки.
-type Error interface {
+// Basic - базовая реализация http ошибки.
+type Basic interface {
 	ID() (id entities.ID)
 	Type() (t entities.Type)
 	Status() (status entities.Status)
 	StatusCode() (status StatusCode)
 
 	Message(options ...entities.MessageOption) (message string)
-	Error() (err error)
+	Error() (err Error)
+	Is(err error) bool
 
-	SetError(err error) Error
-}
-
-// ErrorConstructor - конструктор Error ошибки.
-type ErrorConstructor struct {
-	errors.ErrorConstructor
-	StatusCode StatusCode
+	SetError(err error) Basic
 }
 
 // basic - стандартная реализация http ошибки.
@@ -33,20 +28,7 @@ type basic struct {
 	statusCode StatusCode
 }
 
-// Build - сбор конструктора Error ошибки.
-func (constructor ErrorConstructor) Build() Error {
-	return &basic{
-		Basic: errors.ErrorConstructor{
-			ID:      constructor.ID,
-			Status:  constructor.Status,
-			Message: constructor.Message,
-		}.Build(),
-		t:          ErrorType,
-		statusCode: constructor.StatusCode,
-	}
-}
-
-// StatusCode - получение http статус кода ошибки.
+// StatusCode - получение статус кода http ошибки.
 func (instance *basic) StatusCode() (status StatusCode) {
 	return instance.statusCode
 }
@@ -56,8 +38,18 @@ func (instance *basic) Type() (t entities.Type) {
 	return instance.t
 }
 
+// Error - получение единой абстракции ошибок.
+func (instance *basic) Error() (err Error) {
+	return Error(instance)
+}
+
+// Is - проверка соответствия исходной ошибки.
+func (instance *basic) Is(err error) bool {
+	return instance.Basic.Is(err)
+}
+
 // SetError - установка изначальной ошибки.
-func (instance *basic) SetError(err error) Error {
+func (instance *basic) SetError(err error) Basic {
 	instance.Basic = instance.Basic.SetError(err)
 	return instance
 }

@@ -2,7 +2,7 @@ package sm_errors_http
 
 import (
 	"errors"
-	"errors/entities"
+	"sm_errors/entities"
 	"testing"
 )
 

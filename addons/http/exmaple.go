@@ -1,13 +1,13 @@
 package sm_errors_http
 
 import (
-	errors "errors"
-	"errors/entities"
+	errors "sm_errors"
+	"sm_errors/entities"
 )
 
 var (
-	ExampleBasicHttpError Error = ErrorConstructor{
-		ErrorConstructor: errors.ErrorConstructor{
+	ExampleBasicHttpError Basic = BasicConstructor{
+		BasicConstructor: errors.BasicConstructor{
 			ID:      0000000000000001,
 			Status:  entities.StatusFailed,
 			Message: new(entities.Message).Set("Example basic-http message. "),
@@ -15,8 +15,8 @@ var (
 		StatusCode: StatusInternalServerError,
 	}.Build()
 
-	ExampleFieldsHttpError FieldsError = FieldsErrorConstructor{
-		FieldsErrorConstructor: errors.FieldsErrorConstructor{
+	ExampleFieldsHttpError Fields = FieldsConstructor{
+		FieldsConstructor: errors.FieldsConstructor{
 			ID:      0000000000000001,
 			Status:  entities.StatusFailed,
 			Message: new(entities.Message).Set("Example fields-http message. "),

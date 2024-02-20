@@ -1,52 +1,34 @@
 package sm_errors_grpc
 
 import (
-	errors "errors"
-	"errors/entities"
+	errors "sm_errors"
+	"sm_errors/entities"
 )
 
-const ErrorType entities.Type = "basic-grpc"
+const BasicType entities.Type = "basic-grpc"
 
-// Error - базовая реализация gprc ошибки.
-type Error interface {
+// Basic - базовая реализация grpc ошибки.
+type Basic interface {
 	ID() (id entities.ID)
 	Type() (t entities.Type)
 	Status() (status entities.Status)
 	StatusCode() (status StatusCode)
 
 	Message(options ...entities.MessageOption) (message string)
-	Error() (err error)
+	Error() (err Error)
+	Is(err error) bool
 
-	SetError(err error) Error
+	SetError(err error) Basic
 }
 
-// ErrorConstructor - конструктор Error ошибки.
-type ErrorConstructor struct {
-	errors.ErrorConstructor
-	StatusCode StatusCode
-}
-
-// basic - стандартная реализация gprc ошибки.
+// basic - стандартная реализация grpc ошибки.
 type basic struct {
 	errors.Basic
 	t          entities.Type
 	statusCode StatusCode
 }
 
-// Build - сбор конструктора Error ошибки.
-func (constructor ErrorConstructor) Build() Error {
-	return &basic{
-		Basic: errors.ErrorConstructor{
-			ID:      constructor.ID,
-			Status:  constructor.Status,
-			Message: constructor.Message,
-		}.Build(),
-		t:          ErrorType,
-		statusCode: constructor.StatusCode,
-	}
-}
-
-// StatusCode - получение статус кода gprc ошибки.
+// StatusCode - получение статус кода grpc ошибки.
 func (instance *basic) StatusCode() (status StatusCode) {
 	return instance.statusCode
 }
@@ -56,8 +38,18 @@ func (instance *basic) Type() (t entities.Type) {
 	return instance.t
 }
 
+// Error - получение единой абстракции ошибок.
+func (instance *basic) Error() (err Error) {
+	return Error(instance)
+}
+
+// Is - проверка соответствия исходной ошибки.
+func (instance *basic) Is(err error) bool {
+	return instance.Basic.Is(err)
+}
+
 // SetError - установка изначальной ошибки.
-func (instance *basic) SetError(err error) Error {
+func (instance *basic) SetError(err error) Basic {
 	instance.Basic = instance.Basic.SetError(err)
 	return instance
 }

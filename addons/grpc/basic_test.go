@@ -2,7 +2,7 @@ package sm_errors_grpc
 
 import (
 	"errors"
-	"errors/entities"
+	"sm_errors/entities"
 	"testing"
 )
 
