@@ -1,9 +1,9 @@
-package sm_errors_grpc
+package entities_http
 
-// StatusCode - статус код grpc.
+// StatusCode - статус код http.
 type StatusCode int
 
-// Коды состояния ошибок grpc.
+// Коды состояния ошибок http.
 const (
 	StatusCanceled StatusCode = iota + 1
 	StatusUnknown

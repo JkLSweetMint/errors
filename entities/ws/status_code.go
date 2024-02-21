@@ -1,4 +1,4 @@
-package sm_errors_ws
+package entities_ws
 
 // StatusCode - статус код web сокетов.
 type StatusCode int
