@@ -9,16 +9,19 @@ import (
 
 // FieldsConstructor - конструктор стандартных ошибок с полями.
 type FieldsConstructor struct {
-	ID      entities.ID
-	Status  entities.Status
-	Message *entities.Message
+	ID     entities.ID
+	Status entities.Status
 
-	Grpc GrpcConstructor
-	Http HttpConstructor
-	Ws   WsConstructor
+	Err     error
+	Message *entities.Message
+	Fields  entities.Fields
+
+	Grpc *GrpcConstructor
+	Http *HttpConstructor
+	Ws   *WsConstructor
 }
 
-// FieldsGrpcConstructor - часть конструктора для создания grcp ошибок с полями.
+// FieldsGrpcConstructor - часть конструктора для создания grpc ошибок с полями.
 type FieldsGrpcConstructor struct {
 	StatusCode entities_grpc.StatusCode
 }
@@ -40,13 +43,81 @@ func (constructor FieldsConstructor) Build() FieldsUniversal {
 			id:     constructor.ID,
 			status: constructor.Status,
 
+			message: constructor.Message,
+			err:     constructor.Err,
+
 			grpcStatusCode: constructor.Grpc.StatusCode,
 			httpStatusCode: constructor.Http.StatusCode,
 			wsStatusCode:   constructor.Ws.StatusCode,
-
-			message: constructor.Message,
-			err:     nil,
 		},
-		fields: nil,
+		fields: constructor.Fields,
+	}
+}
+
+// SetError - установка внутренней ошибки.
+func (constructor FieldsConstructor) SetError(err error) FieldsConstructor {
+	return FieldsConstructor{
+		ID:     constructor.ID,
+		Status: constructor.Status,
+
+		Err:     err,
+		Message: constructor.Message.Clone(),
+
+		Grpc: &GrpcConstructor{
+			StatusCode: constructor.Grpc.StatusCode,
+		},
+		Http: &HttpConstructor{
+			StatusCode: constructor.Http.StatusCode,
+		},
+		Ws: &WsConstructor{
+			StatusCode: constructor.Ws.StatusCode,
+		},
+	}
+}
+
+// SetFields - установка значение полей.
+func (constructor FieldsConstructor) SetFields(InternalFields ...entities.Field) FieldsConstructor {
+	return FieldsConstructor{
+		ID:     constructor.ID,
+		Status: constructor.Status,
+
+		Err:     constructor.Err,
+		Message: constructor.Message.Clone(),
+		Fields:  InternalFields,
+
+		Grpc: &GrpcConstructor{
+			StatusCode: constructor.Grpc.StatusCode,
+		},
+		Http: &HttpConstructor{
+			StatusCode: constructor.Http.StatusCode,
+		},
+		Ws: &WsConstructor{
+			StatusCode: constructor.Ws.StatusCode,
+		},
+	}
+}
+
+// SetField - установка значения поля.
+func (constructor FieldsConstructor) SetField(key, message string) FieldsConstructor {
+	return FieldsConstructor{
+		ID:     constructor.ID,
+		Status: constructor.Status,
+
+		Err:     constructor.Err,
+		Message: constructor.Message.Clone(),
+		Fields: append(constructor.Fields, entities.Field{
+			Key:     key,
+			Message: message,
+		}),
+
+		Grpc: &GrpcConstructor{
+			StatusCode: constructor.Grpc.StatusCode,
+		},
+		Http: &HttpConstructor{
+			StatusCode: constructor.Http.StatusCode,
+		},
+		Ws: &WsConstructor{
+			StatusCode: constructor.Ws.StatusCode,
+		},
 	}
 }

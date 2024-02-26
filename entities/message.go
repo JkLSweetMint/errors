@@ -32,6 +32,13 @@ func (message *Message) String(options ...MessageOption) (val string) {
 	return
 }
 
+// Clone - копирование сообщения.
+func (message *Message) Clone() *Message {
+	return &Message{
+		content: message.content,
+	}
+}
+
 // useOptions - применение опций форматирования к тексту.
 func (message *Message) format(options []MessageOption) {
 	if options == nil {

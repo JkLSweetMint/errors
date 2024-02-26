@@ -15,15 +15,3 @@ type InternalFields struct {
 func (instance InternalFields) Fields() (InternalFields entities.Fields) {
 	return instance.fields
 }
-
-// SetError - установка изначальной ошибки.
-func (instance InternalFields) SetError(err error) FieldsUniversal {
-	instance.err = err
-	return instance
-}
-
-// SetFields - установка значение полей.
-func (instance InternalFields) SetFields(InternalFields ...entities.Field) FieldsUniversal {
-	instance.fields = InternalFields
-	return instance
-}

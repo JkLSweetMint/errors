@@ -13,12 +13,12 @@ type Internal struct {
 	id     entities.ID
 	status entities.Status
 
+	message *entities.Message
+	err     error
+
 	grpcStatusCode entities_grpc.StatusCode
 	httpStatusCode entities_http.StatusCode
 	wsStatusCode   entities_ws.StatusCode
-
-	message *entities.Message
-	err     error
 }
 
 // ID - получение идентификатора ошибки.
@@ -59,7 +59,9 @@ func (instance Internal) WsStatusCode() (status entities_ws.StatusCode) {
 
 // Message - получение сообщения ошибки.
 func (instance Internal) Message(options ...entities.MessageOption) (message string) {
-	message = instance.err.Error()
+	if instance.err != nil {
+		message = instance.err.Error()
+	}
 
 	if instance.message != nil {
 		message = instance.message.String(options...)
@@ -69,17 +71,11 @@ func (instance Internal) Message(options ...entities.MessageOption) (message str
 }
 
 // Error - получение единой абстракции ошибок.
-func (instance Internal) Error() (err Error) {
-	return Error(instance)
+func (instance Internal) Error() (err string) {
+	return instance.err.Error()
 }
 
 // Is - проверка соответствия исходной ошибки.
 func (instance Internal) Is(err error) bool {
 	return errors.Is(instance.err, err)
-}
-
-// SetError - установка изначальной ошибки.
-func (instance Internal) SetError(err error) Universal {
-	instance.err = err
-	return instance
 }

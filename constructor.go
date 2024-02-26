@@ -9,16 +9,18 @@ import (
 
 // Constructor - конструктор стандартных ошибок.
 type Constructor struct {
-	ID      entities.ID
-	Status  entities.Status
+	ID     entities.ID
+	Status entities.Status
+
+	Err     error
 	Message *entities.Message
 
-	Grpc GrpcConstructor
-	Http HttpConstructor
-	Ws   WsConstructor
+	Grpc *GrpcConstructor
+	Http *HttpConstructor
+	Ws   *WsConstructor
 }
 
-// GrpcConstructor - часть конструктора для создания grcp ошибок.
+// GrpcConstructor - часть конструктора для создания grpc ошибок.
 type GrpcConstructor struct {
 	StatusCode entities_grpc.StatusCode
 }
@@ -39,11 +41,32 @@ func (constructor Constructor) Build() Universal {
 		id:     constructor.ID,
 		status: constructor.Status,
 
+		message: constructor.Message,
+		err:     constructor.Err,
+
 		grpcStatusCode: constructor.Grpc.StatusCode,
 		httpStatusCode: constructor.Http.StatusCode,
 		wsStatusCode:   constructor.Ws.StatusCode,
+	}
+}
 
-		message: constructor.Message,
-		err:     nil,
+// SetError - установка внутренней ошибки.
+func (constructor Constructor) SetError(err error) Constructor {
+	return Constructor{
+		ID:     constructor.ID,
+		Status: constructor.Status,
+
+		Err:     err,
+		Message: constructor.Message.Clone(),
+
+		Grpc: &GrpcConstructor{
+			StatusCode: constructor.Grpc.StatusCode,
+		},
+		Http: &HttpConstructor{
+			StatusCode: constructor.Http.StatusCode,
+		},
+		Ws: &WsConstructor{
+			StatusCode: constructor.Ws.StatusCode,
+		},
 	}
 }

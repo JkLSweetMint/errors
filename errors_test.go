@@ -15,68 +15,68 @@ var (
 		Status:  entities.StatusFailed,
 		Message: new(entities.Message).Set("Example error message. "),
 
-		Grpc: GrpcConstructor{
+		Grpc: &GrpcConstructor{
 			StatusCode: entities_grpc.StatusInternalServerError,
 		},
-		Http: HttpConstructor{
+		Http: &HttpConstructor{
 			StatusCode: entities_http.StatusInternalServerError,
 		},
-		Ws: WsConstructor{
+		Ws: &WsConstructor{
 			StatusCode: entities_ws.StatusInternalServerError,
 		},
-	}.Build()
+	}
 	ExampleErrorEmptyMessage = Constructor{
 		ID:      1000000000000001,
 		Status:  entities.StatusFailed,
 		Message: new(entities.Message),
 
-		Grpc: GrpcConstructor{
+		Grpc: &GrpcConstructor{
 			StatusCode: entities_grpc.StatusInternalServerError,
 		},
-		Http: HttpConstructor{
+		Http: &HttpConstructor{
 			StatusCode: entities_http.StatusInternalServerError,
 		},
-		Ws: WsConstructor{
+		Ws: &WsConstructor{
 			StatusCode: entities_ws.StatusInternalServerError,
 		},
-	}.Build()
+	}
 
 	ExampleFieldsError = FieldsConstructor{
 		ID:      1000000000000000,
 		Status:  entities.StatusFailed,
 		Message: new(entities.Message).Set("Example fields error message. "),
 
-		Grpc: GrpcConstructor{
+		Grpc: &GrpcConstructor{
 			StatusCode: entities_grpc.StatusInternalServerError,
 		},
-		Http: HttpConstructor{
+		Http: &HttpConstructor{
 			StatusCode: entities_http.StatusInternalServerError,
 		},
-		Ws: WsConstructor{
+		Ws: &WsConstructor{
 			StatusCode: entities_ws.StatusInternalServerError,
 		},
-	}.Build()
+	}
 	ExampleFieldsErrorEmptyMessage = FieldsConstructor{
 		ID:      1000000000000001,
 		Status:  entities.StatusFailed,
 		Message: new(entities.Message),
 
-		Grpc: GrpcConstructor{
+		Grpc: &GrpcConstructor{
 			StatusCode: entities_grpc.StatusInternalServerError,
 		},
-		Http: HttpConstructor{
+		Http: &HttpConstructor{
 			StatusCode: entities_http.StatusInternalServerError,
 		},
-		Ws: WsConstructor{
+		Ws: &WsConstructor{
 			StatusCode: entities_ws.StatusInternalServerError,
 		},
-	}.Build()
+	}
 )
 
 func TestError(t *testing.T) {
 	var (
 		srcErr = errors.New("Test error. ")
-		err    = ExampleError.SetError(srcErr)
+		err    = ExampleError.SetError(srcErr).Build()
 	)
 
 	if err.ID() != 1000000000000000 {
@@ -111,7 +111,7 @@ func TestError(t *testing.T) {
 		t.Fatal("Invalid error ws status code. ")
 	}
 
-	err = ExampleErrorEmptyMessage.SetError(srcErr)
+	err = ExampleErrorEmptyMessage.SetError(srcErr).Build()
 
 	if err.ID() != 1000000000000001 {
 		t.Fatal("Invalid error id. ")
@@ -129,7 +129,7 @@ func TestError(t *testing.T) {
 func TestGrpcError(t *testing.T) {
 	var (
 		srcErr = errors.New("Test error. ")
-		err    = Grpc(ExampleError.SetError(srcErr))
+		err    = Grpc(ExampleError.SetError(srcErr).Build())
 	)
 
 	if err.ID() != 1000000000000000 {
@@ -156,7 +156,7 @@ func TestGrpcError(t *testing.T) {
 		t.Fatal("Invalid error grpc status code. ")
 	}
 
-	err = Grpc(ExampleErrorEmptyMessage.SetError(srcErr))
+	err = Grpc(ExampleErrorEmptyMessage.SetError(srcErr).Build())
 
 	if err.ID() != 1000000000000001 {
 		t.Fatal("Invalid error id. ")
@@ -174,7 +174,7 @@ func TestGrpcError(t *testing.T) {
 func TestHttpError(t *testing.T) {
 	var (
 		srcErr = errors.New("Test error. ")
-		err    = Http(ExampleError.SetError(srcErr))
+		err    = Http(ExampleError.SetError(srcErr).Build())
 	)
 
 	if err.ID() != 1000000000000000 {
@@ -201,7 +201,7 @@ func TestHttpError(t *testing.T) {
 		t.Fatal("Invalid error http status code. ")
 	}
 
-	err = Http(ExampleErrorEmptyMessage.SetError(srcErr))
+	err = Http(ExampleErrorEmptyMessage.SetError(srcErr).Build())
 
 	if err.ID() != 1000000000000001 {
 		t.Fatal("Invalid error id. ")
@@ -219,7 +219,7 @@ func TestHttpError(t *testing.T) {
 func TestWsError(t *testing.T) {
 	var (
 		srcErr = errors.New("Test error. ")
-		err    = Ws(ExampleError.SetError(srcErr))
+		err    = Ws(ExampleError.SetError(srcErr).Build())
 	)
 
 	if err.ID() != 1000000000000000 {
@@ -246,7 +246,7 @@ func TestWsError(t *testing.T) {
 		t.Fatal("Invalid error ws status code. ")
 	}
 
-	err = Ws(ExampleErrorEmptyMessage.SetError(srcErr))
+	err = Ws(ExampleErrorEmptyMessage.SetError(srcErr).Build())
 
 	if err.ID() != 1000000000000001 {
 		t.Fatal("Invalid error id. ")
@@ -267,7 +267,7 @@ func TestFieldsError(t *testing.T) {
 		err    = ExampleFieldsError.SetError(srcErr).SetFields(entities.Field{
 			Key:     "test",
 			Message: "Invalid value",
-		})
+		}).Build()
 	)
 
 	if err.ID() != 1000000000000000 {
@@ -310,7 +310,7 @@ func TestFieldsError(t *testing.T) {
 		t.Fatal("Invalid error fields. ")
 	}
 
-	err = ExampleFieldsErrorEmptyMessage.SetError(srcErr)
+	err = ExampleFieldsErrorEmptyMessage.SetError(srcErr).Build()
 
 	if err.ID() != 1000000000000001 {
 		t.Fatal("Invalid error id. ")
@@ -339,7 +339,7 @@ func TestGrpcFieldsError(t *testing.T) {
 		err    = FieldsGrpc(ExampleFieldsError.SetError(srcErr).SetFields(entities.Field{
 			Key:     "test",
 			Message: "Invalid value",
-		}))
+		}).Build())
 	)
 
 	if err.ID() != 1000000000000000 {
@@ -374,7 +374,7 @@ func TestGrpcFieldsError(t *testing.T) {
 		t.Fatal("Invalid error fields. ")
 	}
 
-	err = FieldsGrpc(ExampleFieldsErrorEmptyMessage.SetError(srcErr))
+	err = FieldsGrpc(ExampleFieldsErrorEmptyMessage.SetError(srcErr).Build())
 
 	if err.ID() != 1000000000000001 {
 		t.Fatal("Invalid error id. ")
@@ -403,7 +403,7 @@ func TestHttpFieldsError(t *testing.T) {
 		err    = FieldsHttp(ExampleFieldsError.SetError(srcErr).SetFields(entities.Field{
 			Key:     "test",
 			Message: "Invalid value",
-		}))
+		}).Build())
 	)
 
 	if err.ID() != 1000000000000000 {
@@ -438,7 +438,7 @@ func TestHttpFieldsError(t *testing.T) {
 		t.Fatal("Invalid error fields. ")
 	}
 
-	err = FieldsHttp(ExampleFieldsErrorEmptyMessage.SetError(srcErr))
+	err = FieldsHttp(ExampleFieldsErrorEmptyMessage.SetError(srcErr).Build())
 
 	if err.ID() != 1000000000000001 {
 		t.Fatal("Invalid error id. ")
@@ -467,7 +467,7 @@ func TestWsFieldsError(t *testing.T) {
 		err    = FieldsWs(ExampleFieldsError.SetError(srcErr).SetFields(entities.Field{
 			Key:     "test",
 			Message: "Invalid value",
-		}))
+		}).Build())
 	)
 
 	if err.ID() != 1000000000000000 {
@@ -502,7 +502,7 @@ func TestWsFieldsError(t *testing.T) {
 		t.Fatal("Invalid error fields. ")
 	}
 
-	err = FieldsWs(ExampleFieldsErrorEmptyMessage.SetError(srcErr))
+	err = FieldsWs(ExampleFieldsErrorEmptyMessage.SetError(srcErr).Build())
 
 	if err.ID() != 1000000000000001 {
 		t.Fatal("Invalid error id. ")

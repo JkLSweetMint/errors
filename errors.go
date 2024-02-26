@@ -7,6 +7,7 @@ type Error interface {
 	ID() (id entities.ID)
 	Is(err error) bool
 	String() (str string)
+	Error() (err string)
 	Status() (status entities.Status)
 
 	Message(options ...entities.MessageOption) (message string)
@@ -17,6 +18,7 @@ type Fields interface {
 	ID() (id entities.ID)
 	Is(err error) bool
 	String() (str string)
+	Error() (err string)
 	Status() (status entities.Status)
 
 	Message(options ...entities.MessageOption) (message string)

@@ -45,7 +45,7 @@ var (
 	}
 )
 
-// String - получение строкового представления ws статус кода.
+// String - получение строкового представления http статус кода.
 func (code StatusCode) String() (val string) {
 	val = unknownStatusCode
 
