@@ -16,8 +16,7 @@ type Constructor struct {
 	Message *entities.Message
 
 	Grpc *GrpcConstructor
-	Http *HttpConstructor
-	Ws   *WsConstructor
+	Web  *WebConstructor
 }
 
 // GrpcConstructor - часть конструктора для создания grpc ошибок.
@@ -25,19 +24,15 @@ type GrpcConstructor struct {
 	StatusCode entities_grpc.StatusCode
 }
 
-// HttpConstructor - часть конструктора для создания http ошибок.
-type HttpConstructor struct {
-	StatusCode entities_http.StatusCode
-}
-
-// WsConstructor - часть конструктора для создания ws ошибок.
-type WsConstructor struct {
-	StatusCode entities_ws.StatusCode
+// WebConstructor - часть конструктора для создания web ошибок.
+type WebConstructor struct {
+	HttpStatusCode entities_http.StatusCode
+	WsStatusCode   entities_ws.StatusCode
 }
 
 // Build - сбор универсальной ошибки.
 func (constructor Constructor) Build() Universal {
-	return Internal{
+	return internal{
 		id:     constructor.ID,
 		status: constructor.Status,
 
@@ -45,8 +40,8 @@ func (constructor Constructor) Build() Universal {
 		err:     constructor.Err,
 
 		grpcStatusCode: constructor.Grpc.StatusCode,
-		httpStatusCode: constructor.Http.StatusCode,
-		wsStatusCode:   constructor.Ws.StatusCode,
+		httpStatusCode: constructor.Web.HttpStatusCode,
+		wsStatusCode:   constructor.Web.WsStatusCode,
 	}
 }
 
@@ -62,11 +57,9 @@ func (constructor Constructor) SetError(err error) Constructor {
 		Grpc: &GrpcConstructor{
 			StatusCode: constructor.Grpc.StatusCode,
 		},
-		Http: &HttpConstructor{
-			StatusCode: constructor.Http.StatusCode,
-		},
-		Ws: &WsConstructor{
-			StatusCode: constructor.Ws.StatusCode,
+		Web: &WebConstructor{
+			HttpStatusCode: constructor.Web.HttpStatusCode,
+			WsStatusCode:   constructor.Web.WsStatusCode,
 		},
 	}
 }

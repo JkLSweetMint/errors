@@ -7,11 +7,37 @@ import (
 // Grpc - абстракция системы grpc ошибок.
 type Grpc interface {
 	Error
-	GrpcStatusCode() (status entities_grpc.StatusCode)
+
+	StatusCode() (status entities_grpc.StatusCode)
 }
 
 // FieldsGrpc - абстракция системы grpc ошибок с полями.
 type FieldsGrpc interface {
 	Fields
-	GrpcStatusCode() (status entities_grpc.StatusCode)
+
+	StatusCode() (status entities_grpc.StatusCode)
+}
+
+// ----------------------------------------------------------------
+
+// internalGrpc - внутрення реализация grpc ошибки.
+type internalGrpc struct {
+	internal
+}
+
+// StatusCode - получение статус кода ошибки.
+func (instance internalGrpc) StatusCode() (status entities_grpc.StatusCode) {
+	return instance.grpcStatusCode
+}
+
+// ----------------------------------------------------------------
+
+// internalGrpc - внутрення реализация grpc ошибок с полями.
+type internalFieldsGrpc struct {
+	internalFields
+}
+
+// StatusCode - получение статус кода ошибки.
+func (instance internalFieldsGrpc) StatusCode() (status entities_grpc.StatusCode) {
+	return instance.grpcStatusCode
 }

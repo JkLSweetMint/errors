@@ -2,6 +2,14 @@ package errors
 
 import "sm_errors/entities"
 
+const (
+	typeBasic = iota
+	typeGrpc
+	typeWeb
+	typeWebHttp
+	typeWebWs
+)
+
 // Error - единая абстракция системы ошибок.
 type Error interface {
 	ID() (id entities.ID)

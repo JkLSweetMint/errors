@@ -17,8 +17,7 @@ type FieldsConstructor struct {
 	Fields  entities.Fields
 
 	Grpc *GrpcConstructor
-	Http *HttpConstructor
-	Ws   *WsConstructor
+	Web  *WebConstructor
 }
 
 // FieldsGrpcConstructor - часть конструктора для создания grpc ошибок с полями.
@@ -38,8 +37,8 @@ type FieldsWsConstructor struct {
 
 // Build - сбор универсальной ошибки с полями.
 func (constructor FieldsConstructor) Build() FieldsUniversal {
-	return InternalFields{
-		Internal: Internal{
+	return internalFields{
+		internal: internal{
 			id:     constructor.ID,
 			status: constructor.Status,
 
@@ -47,8 +46,8 @@ func (constructor FieldsConstructor) Build() FieldsUniversal {
 			err:     constructor.Err,
 
 			grpcStatusCode: constructor.Grpc.StatusCode,
-			httpStatusCode: constructor.Http.StatusCode,
-			wsStatusCode:   constructor.Ws.StatusCode,
+			httpStatusCode: constructor.Web.HttpStatusCode,
+			wsStatusCode:   constructor.Web.WsStatusCode,
 		},
 		fields: constructor.Fields,
 	}
@@ -66,33 +65,29 @@ func (constructor FieldsConstructor) SetError(err error) FieldsConstructor {
 		Grpc: &GrpcConstructor{
 			StatusCode: constructor.Grpc.StatusCode,
 		},
-		Http: &HttpConstructor{
-			StatusCode: constructor.Http.StatusCode,
-		},
-		Ws: &WsConstructor{
-			StatusCode: constructor.Ws.StatusCode,
+		Web: &WebConstructor{
+			HttpStatusCode: constructor.Web.HttpStatusCode,
+			WsStatusCode:   constructor.Web.WsStatusCode,
 		},
 	}
 }
 
 // SetFields - установка значение полей.
-func (constructor FieldsConstructor) SetFields(InternalFields ...entities.Field) FieldsConstructor {
+func (constructor FieldsConstructor) SetFields(internalFields ...entities.Field) FieldsConstructor {
 	return FieldsConstructor{
 		ID:     constructor.ID,
 		Status: constructor.Status,
 
 		Err:     constructor.Err,
 		Message: constructor.Message.Clone(),
-		Fields:  InternalFields,
+		Fields:  internalFields,
 
 		Grpc: &GrpcConstructor{
 			StatusCode: constructor.Grpc.StatusCode,
 		},
-		Http: &HttpConstructor{
-			StatusCode: constructor.Http.StatusCode,
-		},
-		Ws: &WsConstructor{
-			StatusCode: constructor.Ws.StatusCode,
+		Web: &WebConstructor{
+			HttpStatusCode: constructor.Web.HttpStatusCode,
+			WsStatusCode:   constructor.Web.WsStatusCode,
 		},
 	}
 }
@@ -113,11 +108,9 @@ func (constructor FieldsConstructor) SetField(key, message string) FieldsConstru
 		Grpc: &GrpcConstructor{
 			StatusCode: constructor.Grpc.StatusCode,
 		},
-		Http: &HttpConstructor{
-			StatusCode: constructor.Http.StatusCode,
-		},
-		Ws: &WsConstructor{
-			StatusCode: constructor.Ws.StatusCode,
+		Web: &WebConstructor{
+			HttpStatusCode: constructor.Web.HttpStatusCode,
+			WsStatusCode:   constructor.Web.WsStatusCode,
 		},
 	}
 }
