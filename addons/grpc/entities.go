@@ -1,4 +1,4 @@
-package entities_grpc
+package grpc_addon
 
 // StatusCode - статус код grpc.
 type StatusCode int

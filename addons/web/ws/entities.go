@@ -1,4 +1,4 @@
-package entities_ws
+package web_ws_addon
 
 // StatusCode - статус код web сокетов.
 type StatusCode int

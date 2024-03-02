@@ -1,65 +1,94 @@
 package errors
 
 import (
+	grpc_addon "sm_errors/addons/grpc"
+	web_addon "sm_errors/addons/web"
 	"sm_errors/entities"
-	entities_grpc "sm_errors/entities/grpc"
-	entities_http "sm_errors/entities/http"
-	entities_ws "sm_errors/entities/ws"
+	"sm_errors/internal"
 )
 
-// Constructor - конструктор стандартных ошибок.
+// Constructor - конструктор ошибок.
 type Constructor struct {
 	ID     entities.ID
 	Status entities.Status
 
 	Err     error
 	Message *entities.Message
+	Fields  entities.Fields
 
-	Grpc *GrpcConstructor
-	Web  *WebConstructor
-}
-
-// GrpcConstructor - часть конструктора для создания grpc ошибок.
-type GrpcConstructor struct {
-	StatusCode entities_grpc.StatusCode
-}
-
-// WebConstructor - часть конструктора для создания web ошибок.
-type WebConstructor struct {
-	HttpStatusCode entities_http.StatusCode
-	WsStatusCode   entities_ws.StatusCode
+	Grpc *grpc_addon.Constructor
+	Web  *web_addon.Constructor
 }
 
 // Build - сбор универсальной ошибки.
 func (constructor Constructor) Build() Universal {
-	return internal{
-		id:     constructor.ID,
-		status: constructor.Status,
+	var t = "basic"
 
-		message: constructor.Message,
-		err:     constructor.Err,
-
-		grpcStatusCode: constructor.Grpc.StatusCode,
-		httpStatusCode: constructor.Web.HttpStatusCode,
-		wsStatusCode:   constructor.Web.WsStatusCode,
+	if len(constructor.Fields) > 0 {
+		t = "fields"
 	}
+
+	return universal{
+		Internal: internal.Constructor{
+			ID:     constructor.ID,
+			Status: constructor.Status,
+			Type:   t,
+
+			Err:     constructor.Err,
+			Message: constructor.Message,
+			Fields:  constructor.Fields,
+		}.Build(),
+
+		GrpcAddonOptions: constructor.Grpc.Options(),
+		WebAddonOptions:  constructor.Web.Options(),
+	}
+}
+
+// Clone - получение копии.
+func (constructor Constructor) Clone() Constructor {
+	var newConstructor = Constructor{
+		ID:     constructor.ID,
+		Status: constructor.Status,
+
+		Err:     constructor.Err,
+		Message: nil,
+		Fields:  constructor.Fields,
+
+		Grpc: constructor.Grpc.Clone(),
+		Web:  constructor.Web.Clone(),
+	}
+
+	if constructor.Message != nil {
+		newConstructor.Message = constructor.Message.Clone()
+	}
+
+	return newConstructor
 }
 
 // SetError - установка внутренней ошибки.
 func (constructor Constructor) SetError(err error) Constructor {
-	return Constructor{
-		ID:     constructor.ID,
-		Status: constructor.Status,
+	var newConstructor = constructor.Clone()
+	newConstructor.Err = err
 
-		Err:     err,
-		Message: constructor.Message.Clone(),
+	return newConstructor
+}
 
-		Grpc: &GrpcConstructor{
-			StatusCode: constructor.Grpc.StatusCode,
-		},
-		Web: &WebConstructor{
-			HttpStatusCode: constructor.Web.HttpStatusCode,
-			WsStatusCode:   constructor.Web.WsStatusCode,
-		},
-	}
+// SetFields - установка значение полей.
+func (constructor Constructor) SetFields(internalFields ...entities.Field) Constructor {
+	var newConstructor = constructor.Clone()
+	newConstructor.Fields = internalFields
+
+	return newConstructor
+}
+
+// SetField - установка значения поля.
+func (constructor Constructor) SetField(key, message string) Constructor {
+	var newConstructor = constructor.Clone()
+	newConstructor.Fields = append(constructor.Fields, entities.Field{
+		Key:     key,
+		Message: message,
+	})
+
+	return newConstructor
+
 }

@@ -1,4 +1,4 @@
-package entities_http
+package http
 
 // StatusCode - http статус код.
 type StatusCode int
