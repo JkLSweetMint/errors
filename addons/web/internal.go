@@ -5,10 +5,10 @@ import (
 	"encoding/xml"
 	"fmt"
 	"reflect"
-	web_http_addon "sm_errors/addons/web/http"
-	web_ws_addon "sm_errors/addons/web/ws"
-	"sm_errors/entities"
-	"sm_errors/internal"
+	web_http_addon "sm-errors/addons/web/http"
+	web_ws_addon "sm-errors/addons/web/ws"
+	"sm-errors/entities"
+	"sm-errors/internal"
 	"sort"
 )
 

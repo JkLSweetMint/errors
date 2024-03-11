@@ -1,10 +1,12 @@
 package errors
 
 import (
-	grpc_addon "sm_errors/addons/grpc"
-	web_addon "sm_errors/addons/web"
-	"sm_errors/entities"
-	"sm_errors/internal"
+	grpc_addon "sm-errors/addons/grpc"
+	web_addon "sm-errors/addons/web"
+	web_http_addon "sm-errors/addons/web/http"
+	web_ws_addon "sm-errors/addons/web/ws"
+	"sm-errors/entities"
+	"sm-errors/internal"
 )
 
 // Constructor - конструктор ошибок.
@@ -28,6 +30,8 @@ func (constructor Constructor) Build() Universal {
 		t = "fields"
 	}
 
+	constructor = constructor.FillEmptyFields()
+
 	return universal{
 		Internal: internal.Constructor{
 			ID:     constructor.ID,
@@ -44,6 +48,27 @@ func (constructor Constructor) Build() Universal {
 	}
 }
 
+// FillEmptyFields - заполнение пустых полей.
+func (constructor Constructor) FillEmptyFields() Constructor {
+	if constructor.Grpc == nil {
+		constructor.Grpc = new(grpc_addon.Constructor)
+	}
+
+	if constructor.Web == nil {
+		constructor.Web = new(web_addon.Constructor)
+	}
+
+	if constructor.Web.Http == nil {
+		constructor.Web.Http = new(web_http_addon.Constructor)
+	}
+
+	if constructor.Web.Ws == nil {
+		constructor.Web.Ws = new(web_ws_addon.Constructor)
+	}
+
+	return constructor
+}
+
 // Clone - получение копии.
 func (constructor Constructor) Clone() Constructor {
 	var newConstructor = Constructor{
@@ -53,9 +78,14 @@ func (constructor Constructor) Clone() Constructor {
 		Err:     constructor.Err,
 		Message: nil,
 		Fields:  constructor.Fields,
+	}
 
-		Grpc: constructor.Grpc.Clone(),
-		Web:  constructor.Web.Clone(),
+	if constructor.Grpc != nil {
+		newConstructor.Grpc = constructor.Grpc.Clone()
+	}
+
+	if constructor.Web != nil {
+		newConstructor.Web = constructor.Web.Clone()
 	}
 
 	if constructor.Message != nil {

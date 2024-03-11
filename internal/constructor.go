@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"sm_errors/entities"
+	"sm-errors/entities"
 )
 
 // Constructor - конструктор ошибок.

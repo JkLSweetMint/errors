@@ -1,9 +1,9 @@
 package web_addon
 
 import (
-	web_http_addon "sm_errors/addons/web/http"
-	web_ws_addon "sm_errors/addons/web/ws"
-	"sm_errors/entities"
+	web_http_addon "sm-errors/addons/web/http"
+	web_ws_addon "sm-errors/addons/web/ws"
+	"sm-errors/entities"
 )
 
 // Http - абстракция системы web http ошибок.

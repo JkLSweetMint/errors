@@ -1,17 +1,9 @@
 package errors
 
 import (
-	grpc_addon "sm_errors/addons/grpc"
-	web_addon "sm_errors/addons/web"
-	"sm_errors/entities"
-)
-
-const (
-	typeBasic = iota
-	typeGrpc
-	typeWeb
-	typeWebHttp
-	typeWebWs
+	grpc_addon "sm-errors/addons/grpc"
+	web_addon "sm-errors/addons/web"
+	"sm-errors/entities"
 )
 
 // Universal - единая универсальная абстракция системы ошибок.

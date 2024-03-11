@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"sm_errors/entities"
+	"sm-errors/entities"
 	"sort"
 )
 
@@ -67,7 +67,11 @@ func (instance Internal) Message(options ...entities.MessageOption) (message str
 
 // Error - получение единой абстракции ошибок.
 func (instance Internal) Error() (err string) {
-	return instance.err.Error()
+	if instance.err != nil {
+		err = instance.err.Error()
+	}
+
+	return
 }
 
 // Is - проверка соответствия исходной ошибки.

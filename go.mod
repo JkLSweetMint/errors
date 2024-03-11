@@ -1,4 +1,4 @@
-module sm_errors
+module sm-errors
 
 go 1.21
 

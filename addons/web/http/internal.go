@@ -5,8 +5,8 @@ import (
 	"encoding/xml"
 	"fmt"
 	"reflect"
-	"sm_errors/entities"
-	"sm_errors/internal"
+	"sm-errors/entities"
+	"sm-errors/internal"
 	"sort"
 )
 

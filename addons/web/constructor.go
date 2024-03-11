@@ -1,8 +1,8 @@
 package web_addon
 
 import (
-	web_http_addon "sm_errors/addons/web/http"
-	web_ws_addon "sm_errors/addons/web/ws"
+	web_http_addon "sm-errors/addons/web/http"
+	web_ws_addon "sm-errors/addons/web/ws"
 )
 
 // Constructor - внутренняя реализация конструктора дополнения ошибки.

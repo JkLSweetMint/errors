@@ -5,8 +5,8 @@ type Fields []Field
 
 // Field - поле c сообщением об ошибке.
 type Field struct {
-	Key     string
-	Message string
+	Key     string `json:"key"     yaml:"Key"     xml:"Key"     description:"Ключ."`      // Ключ
+	Message string `json:"message" yaml:"Message" xml:"Message" description:"Сообщение."` // Сообщение
 }
 
 // Get - получение поля с сообщением.

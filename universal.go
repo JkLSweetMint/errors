@@ -1,9 +1,9 @@
 package errors
 
 import (
-	grpc_addon "sm_errors/addons/grpc"
-	web_addon "sm_errors/addons/web"
-	internal "sm_errors/internal"
+	grpc_addon "sm-errors/addons/grpc"
+	web_addon "sm-errors/addons/web"
+	internal "sm-errors/internal"
 )
 
 // universal - внутренняя реализация универсальной ошибки.
