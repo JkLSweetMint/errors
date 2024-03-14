@@ -114,6 +114,7 @@ func (constructor Constructor) SetFields(internalFields ...entities.Field) Const
 // SetField - установка значения поля.
 func (constructor Constructor) SetField(key, message string) Constructor {
 	var newConstructor = constructor.Clone()
+
 	newConstructor.Fields = append(constructor.Fields, entities.Field{
 		Key:     key,
 		Message: message,

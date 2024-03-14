@@ -13,16 +13,30 @@ type Constructor struct {
 
 // Clone - получение копии.
 func (constructor Constructor) Clone() *Constructor {
-	return &Constructor{
-		Http: constructor.Http.Clone(),
-		Ws:   constructor.Ws.Clone(),
+	var newConstructor = new(Constructor)
+
+	if constructor.Http != nil {
+		newConstructor.Http = constructor.Http.Clone()
 	}
+
+	if constructor.Ws != nil {
+		newConstructor.Ws = constructor.Ws.Clone()
+	}
+
+	return newConstructor
 }
 
 // Options - сбор опций ошибки.
 func (constructor Constructor) Options() *WebAddonOptions {
-	return &WebAddonOptions{
-		WebHttpAddonOptions: constructor.Http.Options(),
-		WebWsAddonOptions:   constructor.Ws.Options(),
+	var options = new(WebAddonOptions)
+
+	if constructor.Http != nil {
+		options.WebHttpAddonOptions = constructor.Http.Options()
 	}
+
+	if constructor.Ws != nil {
+		options.WebWsAddonOptions = constructor.Ws.Options()
+	}
+
+	return options
 }
