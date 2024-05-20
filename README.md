@@ -1,5 +1,5 @@
 # sm-errors
-### v24.0.1:
+### v24.0.2:
 
 [See Changelog](CHANGELOG.md)
 

@@ -22,4 +22,18 @@ type (
 		helpers.Stringer
 		helpers.Serialization
 	}
+
+	// RestAPI - описание rest api ошибки.
+	RestAPI interface {
+		Error
+
+		StatusCode() (c int)
+	}
+
+	// WebSocket - описание web socket ошибки.
+	WebSocket interface {
+		Error
+
+		StatusCode() (c int)
+	}
 )
