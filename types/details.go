@@ -22,7 +22,7 @@ type (
 
 	// DetailsFieldKey - ключ поля.
 	DetailsFieldKey interface {
-		Add(name string) DetailsFieldKey
+		Add(path ...string) DetailsFieldKey
 		AddArray(name string, index int) DetailsFieldKey
 		AddMap(name string, key any) DetailsFieldKey
 		String() (str string)

@@ -21,10 +21,10 @@ func (fk *FieldKey) init() {
 }
 
 // Add - добавления элемента в путь к ключу.
-func (fk *FieldKey) Add(name string) types.DetailsFieldKey {
+func (fk *FieldKey) Add(path ...string) types.DetailsFieldKey {
 	fk.init()
 
-	fk.path = append(fk.path, name)
+	fk.path = append(fk.path, path...)
 	return fk
 }
 
