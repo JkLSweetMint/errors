@@ -59,8 +59,8 @@ func (c Constructor[T]) Build() (fn Builder[T]) {
 					Status: c.Status,
 
 					Err:     c.Err,
-					Message: c.Message,
-					Details: c.Details,
+					Message: c.Message.Clone(),
+					Details: c.Details.Clone(),
 				})
 
 				e = interface{}(i).(T)
@@ -74,8 +74,8 @@ func (c Constructor[T]) Build() (fn Builder[T]) {
 						Status: c.Status,
 
 						Err:     c.Err,
-						Message: c.Message,
-						Details: c.Details,
+						Message: c.Message.Clone(),
+						Details: c.Details.Clone(),
 					},
 					StatusCode: c.addons.RestAPI.StatusCode,
 				})
@@ -91,8 +91,8 @@ func (c Constructor[T]) Build() (fn Builder[T]) {
 						Status: c.Status,
 
 						Err:     c.Err,
-						Message: c.Message,
-						Details: c.Details,
+						Message: c.Message.Clone(),
+						Details: c.Details.Clone(),
 					},
 					StatusCode: c.addons.WebSocket.StatusCode,
 				})
