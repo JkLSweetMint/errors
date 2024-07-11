@@ -212,6 +212,68 @@ func TestConstructor_Build_WithWebSocket(t *testing.T) {
 	}
 }
 
+func TestConstructor_Build_WithGrpc(t *testing.T) {
+	type testCase[T Grpc] struct {
+		name string
+		c    Constructor[T]
+		want T
+	}
+
+	tests := []testCase[Grpc]{
+		{
+			name: "Case 1",
+			c: Constructor[Grpc]{
+				ID:     "T-000001",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error. "),
+			},
+			want: ExampleGrpcError(),
+		},
+		{
+			name: "Case 2",
+			c: Constructor[Grpc]{
+				ID:     "T-000002",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error with details. "),
+				Details: new(details.Details).
+					Set("key", "value"),
+			},
+			want: ExampleGrpcErrorWithDetails(),
+		},
+		{
+			name: "Case 3",
+			c: Constructor[Grpc]{
+				ID:     "T-000003",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).Text("Example error with details and fields. "),
+				Details: new(details.Details).
+					Set("key", "value").
+					SetFields(types.DetailsField{
+						Key:     new(details.FieldKey).Add("test"),
+						Message: new(messages.TextMessage).Text("123"),
+					}),
+			},
+			want: ExampleGrpcErrorWithDetailsAndFields(),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.c.Build()(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Build() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestConstructor_RestAPI_WithError(t *testing.T) {
 	type args struct {
 		cstr RestAPIConstructor
@@ -626,6 +688,134 @@ func TestConstructor_RestAPI_WithWebSocket(t *testing.T) {
 					},
 					WebSocket: &WebSocketConstructor{
 						StatusCode: 1000,
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.c.RestAPI(tt.args.cstr); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RestAPI() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestConstructor_RestAPI_WithGrpc(t *testing.T) {
+	type args struct {
+		cstr RestAPIConstructor
+	}
+
+	type testCase[T Grpc] struct {
+		name string
+		c    Constructor[T]
+		args args
+		want Constructor[T]
+	}
+
+	tests := []testCase[Grpc]{
+		{
+			name: "Case 1",
+			c: Constructor[Grpc]{
+				ID:     "T-000001",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error. "),
+			},
+			args: args{
+				cstr: RestAPIConstructor{
+					StatusCode: 500,
+				},
+			},
+			want: Constructor[Grpc]{
+				ID:     "T-000001",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error. "),
+
+				addons: &constructorAddons{
+					RestAPI: &RestAPIConstructor{
+						StatusCode: 500,
+					},
+				},
+			},
+		},
+		{
+			name: "Case 2",
+			c: Constructor[Grpc]{
+				ID:     "T-000002",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error with details. "),
+				Details: new(details.Details).
+					Set("key", "value"),
+			},
+			args: args{
+				cstr: RestAPIConstructor{
+					StatusCode: 500,
+				},
+			},
+			want: Constructor[Grpc]{
+				ID:     "T-000002",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error with details. "),
+				Details: new(details.Details).
+					Set("key", "value"),
+
+				addons: &constructorAddons{
+					RestAPI: &RestAPIConstructor{
+						StatusCode: 500,
+					},
+				},
+			},
+		},
+		{
+			name: "Case 3",
+			c: Constructor[Grpc]{
+				ID:     "T-000003",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).Text("Example error with details and fields. "),
+				Details: new(details.Details).
+					Set("key", "value").
+					SetFields(types.DetailsField{
+						Key:     new(details.FieldKey).Add("test"),
+						Message: new(messages.TextMessage).Text("123"),
+					}),
+			},
+			args: args{
+				cstr: RestAPIConstructor{
+					StatusCode: 500,
+				},
+			},
+			want: Constructor[Grpc]{
+				ID:     "T-000003",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).Text("Example error with details and fields. "),
+				Details: new(details.Details).
+					Set("key", "value").
+					SetFields(types.DetailsField{
+						Key:     new(details.FieldKey).Add("test"),
+						Message: new(messages.TextMessage).Text("123"),
+					}),
+
+				addons: &constructorAddons{
+					RestAPI: &RestAPIConstructor{
+						StatusCode: 500,
 					},
 				},
 			},
@@ -1070,6 +1260,134 @@ func TestConstructor_WebSocket_WithWebSocket(t *testing.T) {
 	}
 }
 
+func TestConstructor_WebSocket_WithGrpc(t *testing.T) {
+	type args struct {
+		cstr WebSocketConstructor
+	}
+
+	type testCase[T Grpc] struct {
+		name string
+		c    Constructor[T]
+		args args
+		want Constructor[T]
+	}
+
+	tests := []testCase[Grpc]{
+		{
+			name: "Case 1",
+			c: Constructor[Grpc]{
+				ID:     "T-000001",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error. "),
+			},
+			args: args{
+				cstr: WebSocketConstructor{
+					StatusCode: 1001,
+				},
+			},
+			want: Constructor[Grpc]{
+				ID:     "T-000001",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error. "),
+
+				addons: &constructorAddons{
+					WebSocket: &WebSocketConstructor{
+						StatusCode: 1001,
+					},
+				},
+			},
+		},
+		{
+			name: "Case 2",
+			c: Constructor[Grpc]{
+				ID:     "T-000002",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error with details. "),
+				Details: new(details.Details).
+					Set("key", "value"),
+			},
+			args: args{
+				cstr: WebSocketConstructor{
+					StatusCode: 1001,
+				},
+			},
+			want: Constructor[Grpc]{
+				ID:     "T-000002",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error with details. "),
+				Details: new(details.Details).
+					Set("key", "value"),
+
+				addons: &constructorAddons{
+					WebSocket: &WebSocketConstructor{
+						StatusCode: 1001,
+					},
+				},
+			},
+		},
+		{
+			name: "Case 3",
+			c: Constructor[Grpc]{
+				ID:     "T-000003",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).Text("Example error with details and fields. "),
+				Details: new(details.Details).
+					Set("key", "value").
+					SetFields(types.DetailsField{
+						Key:     new(details.FieldKey).Add("test"),
+						Message: new(messages.TextMessage).Text("123"),
+					}),
+			},
+			args: args{
+				cstr: WebSocketConstructor{
+					StatusCode: 1001,
+				},
+			},
+			want: Constructor[Grpc]{
+				ID:     "T-000003",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).Text("Example error with details and fields. "),
+				Details: new(details.Details).
+					Set("key", "value").
+					SetFields(types.DetailsField{
+						Key:     new(details.FieldKey).Add("test"),
+						Message: new(messages.TextMessage).Text("123"),
+					}),
+
+				addons: &constructorAddons{
+					WebSocket: &WebSocketConstructor{
+						StatusCode: 1001,
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.c.WebSocket(tt.args.cstr); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("WebSocket() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestConstructor_fillEmptyField_WithError(t *testing.T) {
 	type testCase[T Error] struct {
 		name string
@@ -1408,6 +1726,103 @@ func TestConstructor_fillEmptyField_WithWebSocket(t *testing.T) {
 						StatusCode: 1001,
 					},
 				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.c.fillEmptyField(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("fillEmptyField() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestConstructor_fillEmptyField_WithGrpc(t *testing.T) {
+	type testCase[T Grpc] struct {
+		name string
+		c    Constructor[T]
+		want *Constructor[T]
+	}
+
+	tests := []testCase[Grpc]{
+		{
+			name: "Case 1",
+			c: Constructor[Grpc]{
+				ID:     "T-000001",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error. "),
+			},
+			want: &Constructor[Grpc]{
+				ID:     "T-000001",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error. "),
+				Details: new(details.Details),
+
+				addons: new(constructorAddons),
+			},
+		},
+		{
+			name: "Case 2",
+			c: Constructor[Grpc]{
+				ID:     "T-000002",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error with details. "),
+				Details: new(details.Details).
+					Set("key", "value"),
+			},
+			want: &Constructor[Grpc]{
+				ID:     "T-000002",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).
+					Text("Example error with details. "),
+				Details: new(details.Details).
+					Set("key", "value"),
+
+				addons: new(constructorAddons),
+			},
+		},
+		{
+			name: "Case 3",
+			c: Constructor[Grpc]{
+				ID:     "T-000003",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).Text("Example error with details and fields. "),
+				Details: new(details.Details).
+					Set("key", "value").
+					SetFields(types.DetailsField{
+						Key:     new(details.FieldKey).Add("test"),
+						Message: new(messages.TextMessage).Text("123"),
+					}),
+			},
+			want: &Constructor[Grpc]{
+				ID:     "T-000003",
+				Type:   types.TypeSystem,
+				Status: types.StatusFatal,
+
+				Message: new(messages.TextMessage).Text("Example error with details and fields. "),
+				Details: new(details.Details).
+					Set("key", "value").
+					SetFields(types.DetailsField{
+						Key:     new(details.FieldKey).Add("test"),
+						Message: new(messages.TextMessage).Text("123"),
+					}),
+
+				addons: new(constructorAddons),
 			},
 		},
 	}

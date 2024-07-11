@@ -36,4 +36,9 @@ type (
 
 		StatusCode() (c int)
 	}
+
+	// Grpc - описание grpc ошибки.
+	Grpc interface {
+		Error
+	}
 )

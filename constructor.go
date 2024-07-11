@@ -5,6 +5,7 @@ import (
 	"sm-errors/entities/details"
 	"sm-errors/entities/messages"
 	"sm-errors/internal"
+	"sm-errors/internal/grpc"
 	"sm-errors/internal/rest_api"
 	"sm-errors/internal/ws"
 	"sm-errors/types"
@@ -93,6 +94,12 @@ func (c Constructor[T]) Build() (fn Builder[T]) {
 		case "*errors.WebSocket":
 			{
 				var i = ws.New(store)
+
+				e = interface{}(i).(T)
+			}
+		case "*errors.Grpc":
+			{
+				var i = grpc.New(store)
 
 				e = interface{}(i).(T)
 			}

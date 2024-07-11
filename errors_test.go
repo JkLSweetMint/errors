@@ -145,6 +145,43 @@ var (
 	).Build()
 )
 
+// Примеры grpc ошибок.
+var (
+	ExampleGrpcError = Constructor[Grpc]{
+		ID:     "T-000001",
+		Type:   types.TypeSystem,
+		Status: types.StatusFatal,
+
+		Message: new(messages.TextMessage).
+			Text("Example error. "),
+	}.Build()
+
+	ExampleGrpcErrorWithDetails = Constructor[Grpc]{
+		ID:     "T-000002",
+		Type:   types.TypeSystem,
+		Status: types.StatusFatal,
+
+		Message: new(messages.TextMessage).
+			Text("Example error with details. "),
+		Details: new(details.Details).
+			Set("key", "value"),
+	}.Build()
+
+	ExampleGrpcErrorWithDetailsAndFields = Constructor[Grpc]{
+		ID:     "T-000003",
+		Type:   types.TypeSystem,
+		Status: types.StatusFatal,
+
+		Message: new(messages.TextMessage).Text("Example error with details and fields. "),
+		Details: new(details.Details).
+			Set("key", "value").
+			SetFields(types.DetailsField{
+				Key:     new(details.FieldKey).Add("test"),
+				Message: new(messages.TextMessage).Text("123"),
+			}),
+	}.Build()
+)
+
 func Test(t *testing.T) {
 	var e = ExampleWebSocketError()
 	e.SetError(errors.New("Test error. "))
